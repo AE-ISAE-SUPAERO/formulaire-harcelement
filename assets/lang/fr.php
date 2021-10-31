@@ -1,23 +1,28 @@
 <?php
 
 $LANG = [
-  'tab_title' => 'Témoignages harcèlement',
-  'title' => 'Formulaire témoignages harcèlement',
-  'subtitle' => 'AE ISAE-SUPAERO - Pôle HDVS',
-  'email_sent' => 'Email envoyé, merci de votre témoignage.',
-  'empty_message' => 'Message vide ! Veuillez réessayer...',
-  'wrong_email_format' => 'Format de l\'email erroné ! Veuillez réessayer...',
-  'sending_error' => 'Erreur d\'envoi ! Veuillez réessayer...',
+  'tab_title' => 'Messagerie HDVS',
+  'title' => 'Messagerie HDVS (Harcèlement Discrimination Violences Sexistes et sexuelles)',
+  'subtitle' => 'AE ISAE-SUPAERO - Pôle Solidaire - Section Harcèlement',
+  'intro' => 'Bienvenue sur la messagerie HDVS de l\'AE. Cette dernière te permet de rapporter, de manière anonyme ou non, un récit de harcèlement, de discrimination, de violence sexiste ou sexuelle, en tant que témoin ou en tant que victime. Tu as également la possibilité de joindre des documents si tu le souhaites. Exprime-toi librement, prends le temps qu\'il te faut pour rédiger ton récit, on n\'est pas pressé.<br><br>Chaque rapport est traité dans les meilleurs délais par la Section Harcèlement. Toute information partagée ici reste confidentielle. Sache que tous les membres de l\'AE sont à ta disposition ; nous sommes toujours là pour t\'aider !',
+  'intro_button' => 'Lire plus',
+  'email_sent' => 'Email envoyé, merci de ton récit.',
+  'empty_message' => 'Message vide ! Tente de réessayer...',
+  'wrong_email_format' => 'Format de l\'email erroné ! Tente de réessayer...',
+  'sending_error' => 'Erreur d\'envoi ! Tente de réessayer...',
   'anonymous' => 'Anonyme',
   'name' => 'Nom :',
   'email' => 'Email (optionnel) :',
-  'testimony' => 'Votre Témoignage :',
-  'footer1' => 'Les informations remplies ici sont exclusivement envoyées au responsable du pôle HDVS, Carl Guignon.<br>Que « Anonyme » soit coché ou non, ce site n\'enregistre rien sur vous ou votre message.',
-  'footer2' => 'Si vous ne me croyez pas, vous pouvez vérifier dans le code source en cliquant',
+  'testimony' => 'Ton récit :',
+  'footer1' => 'Le récit fourni ici est exclusivement envoyé au responsable de la section harcèlement, Carl Guignon.<br>Que « Anonyme » soit coché ou non, ce site n\'enregistre rien sur toi ou ton message.',
+  'footer2' => 'Si tu as un doute, tu peux vérifier dans le code source en cliquant',
   'footer3' => 'ici',
   'email_subject_append' => '',
   'logo_alt' => 'Logo AE ISAE-SUPAERO',
-  'submit' => 'Envoyer'
+  'submit' => 'Envoyer',
+  'attachements' => 'Joindre un/des fichier(s) (optionnel)',
+  'attachement_error' => 'Erreur d\'envoi des pièces jointes. Tente de réessayer...',
+  'attachement_size_error' => 'Fichiers joints trop lourds. Réduis la taille de ceux-ci et réessaye...'
 ];
 
 ?>

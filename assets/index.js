@@ -15,3 +15,7 @@ function update_form(event = null) {
 }
 
 update_form();
+
+function hide() {
+  document.getElementById("intro_button").hidden = true;
+}

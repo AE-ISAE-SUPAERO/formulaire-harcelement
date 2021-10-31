@@ -11,10 +11,13 @@ require 'phpmailer/src/SMTP.php';
 
 require 'config.php';
 
+// initialize error variables
 $message_empty = false;
 $reply_to_error = false;
 $email_status = false;
 $email_error = false;
+$attachement_error = false;
+$attachement_size_error = false;
 
 // LANGUAGE
 if (array_key_exists('lang', $_GET)) {
@@ -63,6 +66,7 @@ if (array_key_exists('message', $_POST)) {
 
     // send email
     if (!$reply_to_error) {
+      // setup phpmailer
       $mail = new PHPMailer();
       $mail->isSMTP();
       $mail->CharSet = PHPMailer::CHARSET_UTF8;
@@ -73,6 +77,7 @@ if (array_key_exists('message', $_POST)) {
       $mail->Password = $pwd;
       $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
 
+      // setup mail info
       $mail->setFrom($from);
       foreach ($to as $address)
         $mail->addAddress($address);
@@ -82,9 +87,44 @@ if (array_key_exists('message', $_POST)) {
       $mail->isHTML(false);
       $mail->Body = $_POST['message'];
 
-      $email_status = true;
-      if (!$mail->send()) {
-        $email_error = true;
+      // upload files and attach
+      $uploaded_files = [];
+      $attachement_size = 0;
+      if (array_key_exists('attachements', $_FILES)) {
+        if (!empty($_FILES['attachements']['name'][0])) {
+          $file_count = count($_FILES['attachements']['name']);
+          for ($i = 0; $i < $file_count; ++$i) {
+            $file_path = $target_dir . basename($_FILES['attachements']['name'][$i]);
+            $attachement_size += $_FILES['attachements']['size'][$i];
+            if ($attachement_size > $max_attachement_size) {
+              $attachement_size_error = true;
+              break;
+            }
+            if (move_uploaded_file($_FILES['attachements']['tmp_name'][$i], $file_path)) {
+              $uploaded_files[] = $file_path;
+              if (!$mail->addAttachment($file_path)) {
+                $attachement_error = true;
+                break;
+              }
+            } else {
+              $attachement_error = true;
+              break;
+            }
+          }
+        }
+      }
+
+      // send mail if no attachement error
+      if (!$attachement_error) {
+        $email_status = true;
+        if (!$mail->send()) {
+          $email_error = true;
+        }
+      }
+
+      // delete uploaded files
+      for ($i = 0; $i < count($uploaded_files); ++$i) {
+        @unlink($uploaded_files[$i]);
       }
     }
   }
@@ -126,13 +166,22 @@ if (array_key_exists('message', $_POST)) {
       ?>
     </div>
 
+    <div class="mb-4">
+      <a class="text-reset" id="intro_button" data-bs-toggle="collapse" href="#intro" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="hide();"><?= $LANG['intro_button'] ?></a>
+      <div class="collapse" id="intro">
+        <?= $LANG['intro'] ?>
+      </div>
+    </div>
+
     <div class="p-3 mb-2 bg-success text-white rounded" <?php if (!$email_status || $email_error) echo 'hidden'; ?>><?= $LANG['email_sent'] ?></div>
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$message_empty) echo 'hidden'; ?>><?= $LANG['empty_message'] ?></div>
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$reply_to_error) echo 'hidden'; ?>><?= $LANG['wrong_email_format'] ?></div>
+    <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_error) echo 'hidden'; ?>><?= $LANG['attachement_error'] ?></div>
+    <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_size_error) echo 'hidden'; ?>><?= $LANG['attachement_size_error'] ?></div>
     <div class="p-3 mb-2 bg-danger text-white rounded" <?php if (!($email_status && $email_error)) echo 'hidden'; ?>><?= $LANG['sending_error'] ?></div>
 
     <div class="p-3 mb-4 border rounded shadow-sm">
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <input type="checkbox" class="form-check-input" name="anonymous" id="anonymous" <?php if (array_key_exists('anonymous', $_POST) && $_POST['anonymous']) echo 'checked'; ?>>
           <label for="anonymous"><?= $LANG['anonymous'] ?></label>
@@ -159,6 +208,11 @@ if (array_key_exists('message', $_POST)) {
                                                                                 } ?></textarea>
         </div>
         <br>
+        <div class="form-group">
+          <label for="attachements"><?= $LANG['attachements'] ?> (max <?= (int)($max_attachement_size / 1e6) ?> Mb) : </label>
+          <input type="file" class="form-control" name="attachements[]" id="attachements" multiple>
+        </div>
+        <br>
         <input type="submit" class="btn btn-primary" value="<?= $LANG['submit'] ?>">
       </form>
     </div>
@@ -168,7 +222,7 @@ if (array_key_exists('message', $_POST)) {
         <?= $LANG['footer1'] ?>
         <br><br>
         <?= $LANG['footer2'] ?> <a href="https://github.com/ae-isae-supaero/formulaire-harcelement" target="_blank"><?= $LANG['footer3'] ?></a>.<br><br>
-        © 2021 AE ISAE-SUPAERO / Victor Colomb - <a class="text-reset" href="https://github.com/ae-isae-supaero/formulaire-harcelement/blob/main/LICENSE" target="_blank">MIT License</a>
+        © 2021 AE ISAE-SUPAERO / Victor Colomb, Responsable Multimédia - <a class="text-reset" href="https://github.com/ae-isae-supaero/formulaire-harcelement/blob/main/LICENSE" target="_blank">MIT License</a>
       </small>
     </p>
   </div>
