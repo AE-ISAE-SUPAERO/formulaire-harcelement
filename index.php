@@ -149,6 +149,9 @@ if (array_key_exists('message', $_POST)) {
 <body>
   <div class="m-3 mx-md-5">
     <div class="row align-items-center justify-content-end mb-4">
+      <div id="logodiv" class="col-md-auto">
+        <img src="assets/logo_fond_bleu_transparent.png" alt="">
+      </div>
       <div class="col-md">
         <h2>
           <?= $LANG['title'] ?>
@@ -180,7 +183,7 @@ if (array_key_exists('message', $_POST)) {
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_size_error) echo 'hidden'; ?>><?= $LANG['attachement_size_error'] ?></div>
     <div class="p-3 mb-2 bg-danger text-white rounded" <?php if (!($email_status && $email_error)) echo 'hidden'; ?>><?= $LANG['sending_error'] ?></div>
 
-    <div class="p-3 mb-4 border rounded shadow-sm">
+    <div id="formdiv" class="p-3 mb-4 border rounded shadow-sm">
       <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <input type="checkbox" class="form-check-input" name="anonymous" id="anonymous" <?php if (array_key_exists('anonymous', $_POST) && $_POST['anonymous']) echo 'checked'; ?>>
@@ -220,9 +223,17 @@ if (array_key_exists('message', $_POST)) {
     <p class="text-center lh-sm text-muted">
       <small>
         <?= $LANG['footer1'] ?>
+        <?php
+        if (count($names) > 1) {
+          echo ($LANG['footer2.2'] . ' ' . implode(', ', array_slice($names, 0, -1)) . ' ' . $LANG['footer2.3'] . ' ' . end($names) . '.');
+        } else {
+          echo ($LANG['footer2.1'] . ' ' . $names[0] . '.');
+        }
+        ?><br>
+        <?= $LANG['footer3'] ?>
         <br><br>
-        <?= $LANG['footer2'] ?> <a href="https://github.com/ae-isae-supaero/formulaire-harcelement" target="_blank"><?= $LANG['footer3'] ?></a>.<br><br>
-        © 2021 AE ISAE-SUPAERO / Victor Colomb, Responsable Multimédia - <a class="text-reset" href="https://github.com/ae-isae-supaero/formulaire-harcelement/blob/main/LICENSE" target="_blank">MIT License</a>
+        <?= $LANG['footer4'] ?> <a href="https://github.com/ae-isae-supaero/formulaire-harcelement" target="_blank"><?= $LANG['footer5'] ?></a>.<br><br>
+        © 2021-<?= date("Y") ?> AE ISAE-SUPAERO / Victor Colomb, Responsable Multimédia - <a class="text-reset" href="https://github.com/ae-isae-supaero/formulaire-harcelement/blob/main/LICENSE" target="_blank">MIT License</a>
       </small>
     </p>
   </div>

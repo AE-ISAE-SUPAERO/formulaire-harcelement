@@ -2,6 +2,8 @@
 
 // email to
 $to = ['carl.guignon@student.isae-supaero.fr'];
+// email to names
+$names = ['Carl Guignon'];
 
 // email server settings
 $host = 'mail44.lwspanel.com';

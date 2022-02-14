@@ -1,3 +1,31 @@
 * {
   --bs-bg-opacity: 0.9 !important;
+  --bs-primary: #151b88 !important;
+  --bs-body-bg: var(--bs-primary) !important;
+}
+
+html {
+  background-color: var(--bs-body-bg);
+}
+
+body {
+  color: #abadd8 !important;
+}
+
+#formdiv {
+  background-color: white;
+  color: var(--bs-body-color);
+}
+
+.btn-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+a {
+  color: #e66f8e !important;
+}
+
+#logodiv > img {
+  max-height: 100px;
 }
