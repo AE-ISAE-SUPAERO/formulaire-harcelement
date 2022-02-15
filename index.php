@@ -12,6 +12,7 @@ require 'phpmailer/src/SMTP.php';
 require 'config.php';
 
 // initialize error variables
+// setting these variables to true will trigger warnings displayed to the user
 $message_empty = false;
 $reply_to_error = false;
 $email_status = false;
@@ -20,6 +21,7 @@ $attachement_error = false;
 $attachement_size_error = false;
 
 // LANGUAGE
+// if found, $_GET['lang']. else, if found, $_COOKIE['lang']. else $_SERVER['HTTP_ACCEPT_LANGUAGE'] (if accepted)
 if (array_key_exists('lang', $_GET)) {
   $lang = $_GET['lang'];
   setcookie('lang', $lang, time() + 31536000, './');
@@ -28,21 +30,25 @@ if (array_key_exists('lang', $_GET)) {
 } else {
   $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 }
+// if $lang is not accepted, default is array_keys($accepted_languages)[0] (see config.php)
 $lang = in_array($lang, array_keys($accepted_languages)) ? $lang : array_keys($accepted_languages)[0];
+// load language values
 require "assets/lang/$lang.php";
 
 // IF MESSAGE, PROCESS AND SEND
 if (array_key_exists('message', $_POST)) {
   if (empty(trim($_POST['message']))) {
+    // if message is empty, trigger warning and do not do anything
     $message_empty = true;
   } else {
-    // gather information from post variables
+    // gather anonymous or not from post variable
     if (array_key_exists('anonymous', $_POST)) {
       $anonymous = filter_var($_POST['anonymous'], FILTER_VALIDATE_BOOLEAN);
     } else {
       $anonymous = false;
     }
 
+    // fetch name if not anonymous and create subject string
     $name = '';
     $subject = '[ae-isae-supaero.fr] Témoignage harcèlement anonyme';
     if (!$anonymous) {
@@ -54,9 +60,11 @@ if (array_key_exists('message', $_POST)) {
       }
     }
 
+    // if email address provided, set reply to
     if (array_key_exists('email', $_POST)) {
       $reply_to = $_POST['email'];
       if (!empty($reply_to) && !PHPMailer::validateAddress($reply_to)) {
+        // if reply to email incorrect, display warning
         $reply_to = '';
         $reply_to_error = true;
       }
@@ -78,35 +86,40 @@ if (array_key_exists('message', $_POST)) {
       $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
 
       // setup mail info
-      $mail->setFrom($from);
+      $mail->setFrom($from);           // from
       foreach ($to as $address)
-        $mail->addAddress($address);
+        $mail->addAddress($address);   // to (multiple possible, see config.php)
       if (!empty($reply_to))
-        $mail->addReplyTo($reply_to);
-      $mail->Subject = $subject;
-      $mail->isHTML(false);
-      $mail->Body = $_POST['message'];
+        $mail->addReplyTo($reply_to);  // reply to (if not empty)
+      $mail->Subject = $subject;       // subject
+      $mail->isHTML(false);            // plain text email
+      $mail->Body = $_POST['message']; // email body
 
       // upload files and attach
       $uploaded_files = [];
       $attachement_size = 0;
       if (array_key_exists('attachements', $_FILES)) {
         if (!empty($_FILES['attachements']['name'][0])) {
+          // if there are attachments
           $file_count = count($_FILES['attachements']['name']);
           for ($i = 0; $i < $file_count; ++$i) {
+            // for each attachement
             $file_path = $target_dir . basename($_FILES['attachements']['name'][$i]);
             $attachement_size += $_FILES['attachements']['size'][$i];
             if ($attachement_size > $max_attachement_size) {
+              // if attachment > max size, display warning
               $attachement_size_error = true;
               break;
             }
             if (move_uploaded_file($_FILES['attachements']['tmp_name'][$i], $file_path)) {
               $uploaded_files[] = $file_path;
               if (!$mail->addAttachment($file_path)) {
+                // if attachment error, display warning
                 $attachement_error = true;
                 break;
               }
             } else {
+              // if attachment file move error, display warning
               $attachement_error = true;
               break;
             }
@@ -115,7 +128,7 @@ if (array_key_exists('message', $_POST)) {
       }
 
       // send mail if no attachement error
-      if (!$attachement_error) {
+      if (!($attachement_error && $attachement_size_error)) {
         $email_status = true;
         if (!$mail->send()) {
           $email_error = true;
@@ -148,6 +161,7 @@ if (array_key_exists('message', $_POST)) {
 
 <body>
   <div class="m-3 mx-md-5">
+    <!-- HEADER -->
     <div class="row align-items-center justify-content-end mb-4">
       <div id="logodiv" class="col-md-auto">
         <img src="assets/logo_fond_bleu_transparent.png" alt="">
@@ -169,6 +183,7 @@ if (array_key_exists('message', $_POST)) {
       ?>
     </div>
 
+    <!-- INTRO TEXT -->
     <div class="mb-4">
       <a class="text-reset" id="intro_button" data-bs-toggle="collapse" href="#intro" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="hide();"><?= $LANG['intro_button'] ?></a>
       <div class="collapse" id="intro">
@@ -176,6 +191,7 @@ if (array_key_exists('message', $_POST)) {
       </div>
     </div>
 
+    <!-- WARNINGS (hidden by default) -->
     <div class="p-3 mb-2 bg-success text-white rounded" <?php if (!$email_status || $email_error) echo 'hidden'; ?>><?= $LANG['email_sent'] ?></div>
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$message_empty) echo 'hidden'; ?>><?= $LANG['empty_message'] ?></div>
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$reply_to_error) echo 'hidden'; ?>><?= $LANG['wrong_email_format'] ?></div>
@@ -183,6 +199,7 @@ if (array_key_exists('message', $_POST)) {
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_size_error) echo 'hidden'; ?>><?= $LANG['attachement_size_error'] ?></div>
     <div class="p-3 mb-2 bg-danger text-white rounded" <?php if (!($email_status && $email_error)) echo 'hidden'; ?>><?= $LANG['sending_error'] ?></div>
 
+    <!-- FORM -->
     <div id="formdiv" class="p-3 mb-4 border rounded shadow-sm">
       <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
@@ -220,6 +237,7 @@ if (array_key_exists('message', $_POST)) {
       </form>
     </div>
 
+    <!-- INFORMATION FOOTER -->
     <p class="text-center lh-sm text-muted">
       <small>
         <?= $LANG['footer1'] ?>
