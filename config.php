@@ -1,9 +1,9 @@
 <?php
 
 // email to
-$to = ['carl.guignon@student.isae-supaero.fr'];
+$to = ['flavie.jariod@student.isae-supaero.fr', 'theo.digonnet@student.isae-supaero.fr'];
 // email to names (displayed in the information footer)
-$names = ['Carl Guignon'];
+$names = ['Flavie Jariod', 'Théo Digonnet'];
 
 // email server settings
 $host = 'mail44.lwspanel.com';
