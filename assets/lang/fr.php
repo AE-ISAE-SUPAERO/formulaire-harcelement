@@ -21,6 +21,7 @@ $LANG = [
   'footer3' => 'Que « Anonyme » soit coché ou non, ce site n\'enregistre rien sur toi ou ton message.',
   'footer4' => 'Si tu as un doute, tu peux vérifier dans le code source en cliquant',
   'footer5' => 'ici',
+  'cookie_info' => 'Ce site dépose au maximum un cookie, complètement impersonnel et nécessaire à son bon fonctionnement.',
   'email_subject_append' => '',
   'logo_alt' => 'Logo AE ISAE-SUPAERO',
   'submit' => 'Envoyer',

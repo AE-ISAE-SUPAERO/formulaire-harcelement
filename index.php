@@ -93,7 +93,6 @@ if (array_key_exists('message', $_POST)) {
         $mail->addReplyTo($reply_to);  // reply to (if not empty)
       $mail->Subject = $subject;       // subject
       $mail->isHTML(false);            // plain text email
-      $mail->Body = $_POST['message']; // email body
 
       // upload files and attach
       $uploaded_files = [];
@@ -126,6 +125,13 @@ if (array_key_exists('message', $_POST)) {
           }
         }
       }
+
+      // if attachement, add security warning
+      $message = $_POST['message'];
+      if ($attachement_size > 0) {
+        $message = $message . PHP_EOL . PHP_EOL . "---" . PHP_EOL . "Note du webmaster : Nous ne pouvons pas vérifier l'intégrité des fichiers joints à ce courriel. Veuillez les ouvrir avec la plus grande attention.";
+      }
+      $mail->Body = $message;
 
       // send mail if no attachement error
       if (!($attachement_error && $attachement_size_error)) {
@@ -251,6 +257,7 @@ if (array_key_exists('message', $_POST)) {
         <?= $LANG['footer3'] ?>
         <br><br>
         <?= $LANG['footer4'] ?> <a href="https://github.com/ae-isae-supaero/formulaire-harcelement" target="_blank"><?= $LANG['footer5'] ?></a>.<br><br>
+        <?= $LANG['cookie_info'] ?><br><br>
         © 2021-<?= date("Y") ?> AE ISAE-SUPAERO / Victor Colomb, Responsable Multimédia - <a class="text-reset" href="https://github.com/ae-isae-supaero/formulaire-harcelement/blob/main/LICENSE" target="_blank">MIT License</a>
       </small>
     </p>
