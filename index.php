@@ -19,6 +19,7 @@ $email_status = false;
 $email_error = false;
 $attachement_error = false;
 $attachement_size_error = false;
+$csrf_error = false;
 
 // LANGUAGE
 // if found, $_GET['lang']. else, if found, $_COOKIE['lang']. else $_SERVER['HTTP_ACCEPT_LANGUAGE'] (if accepted)
@@ -72,8 +73,13 @@ if (array_key_exists('message', $_POST)) {
       $reply_to = '';
     }
 
+    // CSRF token check
+    if(!(key_exists('csrf_token', $_COOKIE) && key_exists('csrf_token', $_POST) && $_COOKIE['csrf_token'] == $_POST['csrf_token'])) {
+      $csrf_error = true;
+    }
+
     // send email
-    if (!$reply_to_error) {
+    if (!($reply_to_error || $csrf_error)) {
       // setup phpmailer
       $mail = new PHPMailer();
       $mail->isSMTP();
@@ -148,6 +154,16 @@ if (array_key_exists('message', $_POST)) {
     }
   }
 }
+
+if (!array_key_exists('message', $_POST) || $message_empty || $reply_to_error || $email_error || $attachement_error || $attachement_size_error || $csrf_error) {
+  // generate and set csrf_token cookie
+  $csrf_token = bin2hex(random_bytes(32));
+  setcookie(
+    'csrf_token',
+    $csrf_token,
+    ['samesite' => 'Strict']
+  );
+}
 ?>
 
 <!doctype html>
@@ -203,10 +219,12 @@ if (array_key_exists('message', $_POST)) {
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_error) echo 'hidden'; ?>><?= $LANG['attachement_error'] ?></div>
     <div class="p-3 mb-2 bg-warning text-white rounded" <?php if (!$attachement_size_error) echo 'hidden'; ?>><?= $LANG['attachement_size_error'] ?></div>
     <div class="p-3 mb-2 bg-danger text-white rounded" <?php if (!($email_status && $email_error)) echo 'hidden'; ?>><?= $LANG['sending_error'] ?></div>
+    <div class="p-3 mb-2 bg-danger text-white rounded" <?php if (!$csrf_error) echo 'hidden' ?>><?= $LANG['csrf_error'] ?></div>
 
     <!-- FORM -->
     <div id="formdiv" class="p-3 mb-4 border rounded shadow-sm">
       <form method="POST" enctype="multipart/form-data">
+        <?php if (isset($csrf_token)) echo '<input type="hidden" name="csrf_token" value="' . $csrf_token . '">' ?>
         <div class="form-group">
           <input type="checkbox" class="form-check-input" name="anonymous" id="anonymous" <?php if (array_key_exists('anonymous', $_POST) && $_POST['anonymous']) echo 'checked'; ?>>
           <label for="anonymous"><?= $LANG['anonymous'] ?></label>

@@ -21,13 +21,14 @@ $LANG = [
   'footer3' => 'Whether "Anonymous" is checked or not, this website does not record anything about you or your message.',
   'footer4' => 'If you have a doubt, you can check the source code by clicking',
   'footer5' => 'here',
-  'cookie_info' => 'This website deposits a maximum of one cookie, completely impersonal and necessary for its proper functioning.',
+  'cookie_info' => 'This website deposits a maximum of two cookies, completely impersonal and necessary for its proper functioning.',
   'email_subject_append' => ' (en anglais)',
   'logo_alt' => 'AE ISAE-SUPAERO Logo',
   'submit' => 'Send',
   'attachements' => 'Attach one or several files (optional)',
   'attachement_error' => 'Attachement error. Please try again...',
-  'attachement_size_error' => 'Attachements too large. Please reduce their size and try again...'
+  'attachement_size_error' => 'Attachements too large. Please reduce their size and try again...',
+  'csrf_error' => 'CSRF Error! Please reload the page, check your form entries and try to submit again.',
 ];
 
 ?>

@@ -21,13 +21,14 @@ $LANG = [
   'footer3' => 'Que « Anonyme » soit coché ou non, ce site n\'enregistre rien sur toi ou ton message.',
   'footer4' => 'Si tu as un doute, tu peux vérifier dans le code source en cliquant',
   'footer5' => 'ici',
-  'cookie_info' => 'Ce site dépose au maximum un cookie, complètement impersonnel et nécessaire à son bon fonctionnement.',
+  'cookie_info' => 'Ce site dépose au maximum deux cookies, complètement impersonnel et nécessaire à son bon fonctionnement.',
   'email_subject_append' => '',
   'logo_alt' => 'Logo AE ISAE-SUPAERO',
   'submit' => 'Envoyer',
   'attachements' => 'Joindre un/des fichier(s) (optionnel)',
   'attachement_error' => 'Erreur d\'envoi des pièces jointes. Tente de réessayer...',
-  'attachement_size_error' => 'Fichiers joints trop lourds. Réduis la taille de ceux-ci et réessaye...'
+  'attachement_size_error' => 'Fichiers joints trop lourds. Réduis la taille de ceux-ci et réessaye...',
+  'csrf_error' => 'Erreur CSRF ! Recharge la page, vérifie les entrées du formulaire et essaie de le valider à nouveau.',
 ];
 
 ?>
